@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, ArrowUpDown } from "lucide-react";
+import PaymentDetailModal from "../PaymentDetailModal/PaymentDetailModal";
+import { PaymentHistoryTableSkeleton } from "@/components/ui/skeletons/SkeletonLoaders";
 
 type PaymentStatus = "Pending" | "Escrowed" | "Released" | "Failed";
 
@@ -16,11 +18,18 @@ const statusClasses: Record<PaymentStatus, string> = {
 };
 
 const PaymentHistory: React.FC = () => {
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<PaymentStatus | "All">("All");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setIsLoading(false), 450);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const allPayments: Payment[] = [
     { id: "1",  date: "2026-02-26", shipmentId: "SHP-9021", amount: 5420.50, token: "USDC", status: "Released", txHash: "0x4a9b2f81c3e5d7a9b2f81c3e5d7a9b2f81c3e5d7" },
@@ -58,15 +67,12 @@ const PaymentHistory: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-6 md:p-4">
-        <div className="mb-6"><h1 className="text-2xl font-bold mb-1">Payment History</h1><p className="text-text-secondary text-sm">Track all payment transactions on the blockchain</p></div>
-        <div className={`${tableContainerClass} p-6`}>
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="grid grid-cols-[1fr_1fr_1fr_1fr_1.5fr] gap-6 mb-4">
-              {[...Array(5)].map((__, j) => <div key={j} className="h-5 rounded animate-shimmer-teal" />)}
-            </div>
-          ))}
+      <div className="p-6 md:p-4" aria-busy="true">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-1">Payment History</h1>
+          <p className="text-text-secondary text-sm">Track all payment transactions on the blockchain</p>
         </div>
+        <PaymentHistoryTableSkeleton />
       </div>
     );
   }

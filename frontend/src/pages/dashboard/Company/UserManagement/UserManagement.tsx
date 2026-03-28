@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Filter, Plus, ChevronLeft, ChevronRight, MoreVertical, X } from 'lucide-react';
+import { UserManagementTableSkeleton } from '@/components/ui/skeletons/SkeletonLoaders';
 import './UserManagement.css';
 
 interface User {
@@ -30,12 +31,18 @@ type ActionMenuState = string | null;
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>(mockUsers);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<ActionMenuState>(null);
-  
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setIsLoading(false), 500);
+    return () => window.clearTimeout(t);
+  }, []);
+
   // Modal Form State
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'Admin' | 'Manager' | 'Viewer'>('Viewer');
@@ -138,7 +145,7 @@ const UserManagement: React.FC = () => {
         </div>
       </div>
 
-      <div className="um-table-wrapper">
+      <div className="um-table-wrapper" aria-busy={isLoading}>
         <table className="um-table">
           <thead>
             <tr>
@@ -149,6 +156,9 @@ const UserManagement: React.FC = () => {
               <th className="actions-col">Actions</th>
             </tr>
           </thead>
+          {isLoading ? (
+            <UserManagementTableSkeleton rows={8} />
+          ) : (
           <tbody>
             {currentUsers.length > 0 ? (
               currentUsers.map((user) => (
@@ -212,11 +222,12 @@ const UserManagement: React.FC = () => {
               </tr>
             )}
           </tbody>
+          )}
         </table>
       </div>
 
       {/* Pagination Controls */}
-      {totalPages > 1 && (
+      {!isLoading && totalPages > 1 && (
         <div className="pagination">
           <span className="page-info">
             Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of {filteredUsers.length} entries
