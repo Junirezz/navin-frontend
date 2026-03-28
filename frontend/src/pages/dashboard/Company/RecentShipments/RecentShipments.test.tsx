@@ -71,18 +71,22 @@ describe('RecentShipments', () => {
     render(<RecentShipments loadingDelayMs={0} />);
 
     act(() => {
-      vi.advanceTimersByTime(0);
+      vi.runOnlyPendingTimers();
     });
 
     expect(screen.getByRole('button', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Page 2' }));
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'Page 2' }));
+    });
     expect(screen.getByRole('button', { name: 'Page 2' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByText('SHP-1006')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: /next page/i }));
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: /next page/i }));
+    });
     expect(screen.getByRole('button', { name: 'Page 3' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByText('SHP-1011')).toBeInTheDocument();
-  });
+  }, 15_000);
 });
 

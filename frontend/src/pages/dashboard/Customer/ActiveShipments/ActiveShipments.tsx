@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ActiveShipmentCardSkeleton } from "@/components/ui/skeletons/SkeletonLoaders";
 
 interface ActiveShipment {
   id: string;
@@ -28,6 +29,25 @@ const statusStyles: Record<ActiveShipment["status"], string> = {
 
 const ActiveShipments: React.FC = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setIsLoading(false), 550);
+    return () => window.clearTimeout(t);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="p-8 md:p-4" aria-busy="true" aria-label="Loading active shipments">
+        <h2 className="text-2xl font-semibold mb-6 text-[#1a1a1a] md:text-xl">Active Shipments</h2>
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-1 md:gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ActiveShipmentCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 md:p-4">

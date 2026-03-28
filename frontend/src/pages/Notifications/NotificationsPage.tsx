@@ -2,7 +2,8 @@ import {
   Bell, Settings, UserCircle, Search, Check,
   Truck, FileText, AlertTriangle, Server, Receipt, DollarSign,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { NotificationCardSkeleton } from "@/components/ui/skeletons/SkeletonLoaders";
 
 type NotificationType = "all" | "shipments" | "settlements" | "system";
 
@@ -30,10 +31,16 @@ const iconStyles: Record<string, string> = {
 };
 
 const NotificationsPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<NotificationType>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setIsLoading(false), 480);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const [notificationsList, setNotificationsList] = useState<Notification[]>([
     { id: "1",  type: "shipments",   icon: "shipment", title: "Shipment Arrived at Port",       badge: "SHIPMENT #NV-9920", badgeColor: "#137FEC", description: "The container has cleared customs in Singapore and is ready for last-mile delivery. All documents have been verified on-chain.", timestamp: "2 mins ago",              actionLabel: "View Details",   isRead: false, link: "/dashboard/shipments/NV-9920" },
@@ -196,8 +203,10 @@ const NotificationsPage = () => {
             <p className="text-[#9ca3af] text-sm m-0">Stay updated with your supply chain events and settlements.</p>
           </div>
           <button
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#283039] border border-[#374151] rounded-lg text-white text-sm cursor-pointer transition-all hover:bg-[#1f2937] hover:border-[#4b5563]"
+            type="button"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#283039] border border-[#374151] rounded-lg text-white text-sm cursor-pointer transition-all hover:bg-[#1f2937] hover:border-[#4b5563] disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleMarkAllAsRead}
+            disabled={isLoading}
           >
             <Check size={16} /> Mark all as read
           </button>
@@ -235,7 +244,13 @@ const NotificationsPage = () => {
 
         {/* Notifications list */}
         <div className="flex flex-col gap-4">
-          {filteredNotifications.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col gap-4" aria-label="Loading notifications">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <NotificationCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : filteredNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center text-[#6b7280]">
               <Bell size={48} className="mb-6 opacity-50" />
               <h3 className="text-xl font-semibold text-[#9ca3af] m-0 mb-2">No notifications found</h3>

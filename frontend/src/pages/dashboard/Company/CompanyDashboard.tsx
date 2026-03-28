@@ -4,6 +4,10 @@ import {
   MoreHorizontal, Ship, Plane, Train, ShieldCheck, AlertTriangle,
   Rocket, Menu, QrCode,
 } from "lucide-react";
+import {
+  RecentShipmentsTableSkeleton,
+  StatCardSkeleton,
+} from "@/components/ui/skeletons/SkeletonLoaders";
 
 const badgeClasses: Record<string, string> = {
   "delivered":  "bg-[rgba(16,185,129,0.1)]  text-[#10b981] border border-[rgba(16,185,129,0.2)]",
@@ -127,9 +131,13 @@ const CompanyDashboard: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-6 max-md:gap-3">
+      <div
+        className="grid grid-cols-2 gap-6 max-md:gap-3"
+        aria-busy={isLoading}
+        aria-label={isLoading ? "Loading dashboard stats" : undefined}
+      >
         {isLoading
-          ? [1, 2, 3, 4].map((i) => <div key={i} className="h-[120px] rounded-xl animate-shimmer" />)
+          ? [1, 2, 3, 4].map((i) => <StatCardSkeleton key={i} />)
           : stats.map((stat) => (
             <div key={stat.id} className="bg-[#14171e] border border-[#1e293b] rounded-xl p-6 flex flex-col transition-transform duration-200 hover:-translate-y-0.5 hover:border-[#334155] max-md:p-4">
               <div className="flex items-center gap-2 text-[#94a3b8] text-[11px] font-semibold uppercase tracking-[0.05em] mb-4">
@@ -180,7 +188,7 @@ const CompanyDashboard: React.FC = () => {
         </div>
 
         {isLoading ? (
-          <div className="h-[300px] rounded-xl animate-shimmer" />
+          <RecentShipmentsTableSkeleton />
         ) : (
           <div className="border border-[rgba(30,41,59,0.5)] rounded-xl overflow-hidden max-md:bg-transparent max-md:border-none">
             {/* Desktop table */}
