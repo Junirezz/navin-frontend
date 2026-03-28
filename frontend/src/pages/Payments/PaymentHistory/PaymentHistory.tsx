@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight, ExternalLink, ArrowUpDown } from "lucide-react";
+import PaymentDetailModal from "../PaymentDetailModal/PaymentDetailModal";
 
 type PaymentStatus = "Pending" | "Escrowed" | "Released" | "Failed";
 
@@ -17,6 +18,8 @@ const statusClasses: Record<PaymentStatus, string> = {
 
 const PaymentHistory: React.FC = () => {
   const [isLoading] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<PaymentStatus | "All">("All");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);

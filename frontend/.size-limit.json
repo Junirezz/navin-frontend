@@ -1,0 +1,8 @@
+[
+  {
+    "name": "All production JS/CSS (gzip)",
+    "path": ["dist/assets/*.js", "dist/assets/*.css"],
+    "limit": "2400 kB",
+    "gzip": true
+  }
+]
