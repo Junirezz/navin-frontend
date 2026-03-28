@@ -18,11 +18,11 @@ const statusClasses: Record<PaymentStatus, string> = {
 
 const PaymentHistory: React.FC = () => {
   const [isLoading] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<PaymentStatus | "All">("All");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 10;
 
   const allPayments: Payment[] = [
