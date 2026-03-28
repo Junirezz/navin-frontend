@@ -113,6 +113,13 @@ pnpm run test:watch   # Run tests in watch mode
 > **⚠️ Important:** Always use `pnpm` (not `npm` or `yarn`) to maintain consistency.
 > Using different package managers creates lock file conflicts and dependency mismatches.
 
+### Soroban contracts (proxy / upgrade safety)
+
+Smart contracts live in [navin-contracts](https://github.com/Navin-xmr/navin-contracts). This frontend does not embed Rust contracts, but any future Soroban client code should validate **contract StrKeys** (`C…`) and, for upgradeable or proxy deployments, restrict calls to IDs listed in environment configuration.
+
+- Utilities: `frontend/src/utils/contractSafety.ts` (`validateSorobanContractId`, `checkSorobanContractForProxySafety`).
+- Optional allowlist: set `VITE_SOROBAN_CONTRACT_ALLOWLIST` in `.env` (see `frontend/.env.example`) to a comma-separated list of trusted contract StrKeys.
+
 ---
 
 ## Contributing

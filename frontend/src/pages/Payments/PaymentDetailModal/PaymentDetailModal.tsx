@@ -1,6 +1,6 @@
 // frontend/src/pages/Payments/PaymentDetailModal/PaymentDetailModal.tsx
 import React, { useEffect } from 'react';
-import { X, ExternalLink, ShieldCheck, Clock, MapPin } from 'lucide-react';
+import { X, ExternalLink, ShieldCheck, MapPin } from 'lucide-react';
 import './PaymentDetailModal.css';
 
 interface PaymentDetailModalProps {
